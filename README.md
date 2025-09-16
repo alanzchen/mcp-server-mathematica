@@ -172,6 +172,101 @@ Verifies a sequence of mathematical expressions to check if each step logically 
     }
     ```
 
+### 3. `establish_wstp_session`
+
+Starts a new persistent Mathematica kernel or connects to an existing one managed by a WSTP server. The server uses WolframScript's `-wstpserver` mode with profile files so that subsequent evaluations reuse the same kernel.
+
+**Input Schema:**
+
+```typescript
+{
+  type: "object",
+  properties: {
+    mode: {
+      type: "string",
+      description: "Start a new kernel or connect to an existing one",
+      enum: ["start", "connect"],
+      default: "start"
+    },
+    serverBase: {
+      type: "string",
+      description: "Optional WSTP server base (port, host@port, or wstp:// URL)"
+    },
+    profilePath: {
+      type: "string",
+      description: "Path to the WSTP profile file used to store the kernel identifier"
+    },
+    replaceExisting: {
+      type: "boolean",
+      description: "Allow replacing an already active persistent session",
+      default: false
+    }
+  }
+}
+```
+
+**Example Usage:**
+
+*   **Start a new persistent kernel:**
+    ```json
+    {
+      "tool_name": "establish_wstp_session",
+      "arguments": {
+        "mode": "start"
+      }
+    }
+    ```
+*   **Connect to an existing profile:**
+    ```json
+    {
+      "tool_name": "establish_wstp_session",
+      "arguments": {
+        "mode": "connect",
+        "profilePath": "/path/to/kernel.profile"
+      }
+    }
+    ```
+
+### 4. `kill_mathematica_kernel`
+
+Terminates the Mathematica kernel associated with the active persistent session or a specific WSTP profile file. This is useful for freeing resources or resetting a session.
+
+**Input Schema:**
+
+```typescript
+{
+  type: "object",
+  properties: {
+    profilePath: {
+      type: "string",
+      description: "Optional profile path to terminate; defaults to the active session"
+    },
+    serverBase: {
+      type: "string",
+      description: "Optional WSTP server base if different from the active session"
+    }
+  }
+}
+```
+
+**Example Usage:**
+
+*   **Kill the active persistent kernel:**
+    ```json
+    {
+      "tool_name": "kill_mathematica_kernel"
+    }
+    ```
+*   **Kill a kernel tracked by a specific profile:**
+    ```json
+    {
+      "tool_name": "kill_mathematica_kernel",
+      "arguments": {
+        "profilePath": "/path/to/kernel.profile"
+      }
+    }
+    ```
+
 ## Troubleshooting
 
 *   **Server Not Found/Not Responding:**
